@@ -1,15 +1,6 @@
 """Davvotts attempt at MazeBot"""
-from mazebot.mazeBotClass import RandomMazeBot
-DOMAIN = "https://api.noopschallenge.com"
-RANDOM = "/mazebot/random"
-RACE = "/mazebot/race/start"
-AUTH = "Davvott"
-PARAMS = {"maxSize":10}
 
-# SOLUTION SAMPLE
-sample = {
-    "directions": "ESS"
-}
+from mazebot.mazeBotClass import RandomMazeBot
 
 
 def main():
@@ -18,27 +9,17 @@ def main():
     print(maze_bot)
 
     continue_maze = True
-    solution = []
     while continue_maze:
 
         # Code here to complete maze
         move = get_player_move()
         maze_bot.move_bot(move)
-        solution.append(move)
+        maze_bot.solution.append(move)
         print_maze(maze_bot)
         if maze_bot.check_end():
             print("Success!!!!! ... or is it ?")
-            maze_bot.send_challenge_solution(solution)
+            maze_bot.send_challenge_solution()
             continue_maze = False
-
-        # try:
-        #     result = send_solution(maze_path, directions)
-        #     if result['result'] == "success":
-        #         maze_path = result['nextMaze']
-        #         next_maze = get_json(maze_path)
-        # except:
-        #     pass
-
 
 def get_player_move():
     """Basic logic to get user input"""

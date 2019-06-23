@@ -21,6 +21,7 @@ class RandomMazeBot:
         self.rows = len(self.map)
         self.x, self.y = random_maze["startingPosition"]
         self.end_pos = random_maze["endingPosition"]  # [x, y]
+        self.solution = []
         self.completion = False
 
     def __str__(self):
@@ -33,10 +34,19 @@ class RandomMazeBot:
         Map North is -1 for list of lists. """
         directions = {"N": (0, -1), "S": (0, 1), "E": (1, 0), "W": (-1, 0)}
         x, y = directions[direction]
+
         if self.check_move(x, y):
             # set current pos on map to ".",
             self.map[self.y][self.x] = "."
             # Update self position
+            self.x += x
+            self.y += y
+            return True
+        elif self.map[self.y+y][self.x+x] == ".":
+            # Backtracking! Remove last solution item
+            self.solution.pop()
+            # Reset maze spot and move bot
+            self.map[self.y][self.x] = " "
             self.x += x
             self.y += y
             return True
@@ -54,12 +64,12 @@ class RandomMazeBot:
         """Self check of self.pos == self.end_pos"""
         return [self.x, self.y] == self.end_pos
 
-    def send_challenge_solution(self, solution):
+    def send_challenge_solution(self):
         """To win, or not to win. That is the challenge."""
         post = DOMAIN + self.maze_path
-        solution = "".join(s for s in solution)
+        solution = "".join(s for s in self.solution)
         print(post)
-        req = requests.post(post, json={'directions':solution})
+        req = requests.post(post, json={'directions': solution})
         r = req.json()
         print(r)
         try:
