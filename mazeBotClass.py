@@ -21,6 +21,7 @@ class RandomMazeBot:
         self.rows = len(self.map)
         self.x, self.y = random_maze["startingPosition"]
         self.end_pos = random_maze["endingPosition"]  # [x, y]
+        self.completion = False
 
     def __str__(self):
         maze_map = "\n".join(" ".join(l) for l in self.map)
@@ -52,3 +53,17 @@ class RandomMazeBot:
     def check_end(self):
         """Self check of self.pos == self.end_pos"""
         return [self.x, self.y] == self.end_pos
+
+    def send_challenge_solution(self, solution):
+        """To win, or not to win. That is the challenge."""
+        post = DOMAIN + self.maze_path
+        solution = "".join(s for s in solution)
+        print(post)
+        req = requests.post(post, json={'directions':solution})
+        r = req.json()
+        print(r)
+        try:
+            if r['result'] == 'correct':
+                self.completion = True
+        except KeyError as error:
+            print(error)

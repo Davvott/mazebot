@@ -27,7 +27,8 @@ def main():
         solution.append(move)
         print_maze(maze_bot)
         if maze_bot.check_end():
-            print("Success!!!!!")
+            print("Success!!!!! ... or is it ?")
+            maze_bot.send_challenge_solution(solution)
             continue_maze = False
 
         # try:
