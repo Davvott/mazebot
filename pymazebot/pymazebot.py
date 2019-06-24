@@ -1,6 +1,7 @@
-"""Davvotts attempt at MazeBot"""
+"""Davvotts attempt at MazeBot.
+Interactive console maze game."""
 
-from mazebot.mazeBotClass import RandomMazeBot
+from mazebot.pymazebot.mazeBotClass import RandomMazeBot
 
 
 def main():
