@@ -7,6 +7,7 @@ RACE = "/mazebot/race/start"
 AUTH = "Davvott"
 PARAMS = {"maxSize": 10}
 
+DIRECTIONS = {(1, 0): "E", (-1, 0): "W", (0, 1): "S", (0, -1): "N"}
 
 class AutomatedMazeBot:
     """Initialise Random maze. position, and other data"""
@@ -33,36 +34,27 @@ class AutomatedMazeBot:
     def check_neighbor_options(self):
         """Checks map for neighbors, returns cardinal directions list"""
         nei = []
-        d = ["E", "W", "S", "N"]
-        directions = [(1, 0), (0, 1)]
-        x, y = self.x, self.y
-        deltas = (1, -1)
-        count = 0
-        for delta_x, delta_y in directions:  # For unpacked tups in list
-            for delta in deltas:
-                delta_x *= delta
-                delta_y *= delta
-                next_x = x + delta_x
-                next_y = y + delta_y
-                # Checks E, W, S, N (1,0) (-1,0) (0,1) (0, -1)
+        delta = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        for delta_x, delta_y in delta:
+            next_x = self.x + delta_x
+            next_y = self.y + delta_y
+            # Checks E, W, S, N
+            if 0 <= next_y < self.rows and 0 <= next_x < self.cols:
+                # Special Case
+                if self.map[next_y][next_x] == "B":
+                    # NOT SRP but...
+                    self.move_bot((delta_x, delta_y))
+                    self.check_end()
+                    return []  # To break while loop in find path
 
-                if 0 <= next_y < self.rows and 0 <= next_x < self.cols:
-                    # Special Case
-                    if self.map[next_y][next_x] == "B":
-                        # NOT SRP but...
-                        self.move_bot(d[count])
-                        self.check_end()
-                        return []  # To break while loop in find path
-                    elif self.map[next_y][next_x] == " ":
-                        nei.append(d[count])
-                count += 1
+                elif self.map[next_y][next_x] == " ":
+                    nei.append((delta_x, delta_y))
         return nei
 
     def move_bot(self, direction):
-        """Uses Cardinal Directions to move position in given direction"""
-        directions = {"N": (0, -1), "S": (0, 1), "E": (1, 0), "W": (-1, 0)}
+        """Uses tuple offsets to move position in given direction"""
 
-        x, y = directions[direction]
+        x, y = direction
 
         if self.map[self.y + y][self.x + x] == ".":
             # Backtracking! Remove last solution item
@@ -77,7 +69,7 @@ class AutomatedMazeBot:
             # Update self position
             self.x += x
             self.y += y
-            self.solution.append(direction)
+            self.solution.append(DIRECTIONS[direction])
 
     def find_path(self):
         """ Logic for path finding. Rudimentary, inefficient"""
@@ -99,7 +91,6 @@ class AutomatedMazeBot:
                 self.move_bot(nei[0])
                 nei = self.check_neighbor_options()
 
-
     def crossroads(self, nei):
         """ Handle junction call """
         # Dead junction
@@ -112,17 +103,16 @@ class AutomatedMazeBot:
         # Active Junction
         else:
             self.junction[self.x, self.y] = nei
-            print("junction", self.junction)
             direction = nei.pop()
-            print("Moving ", direction)
             self.move_bot(direction)
 
     def backtrack(self):
         """Backtrack to most recent junction"""
         while (self.x, self.y) not in [key for key in self.junction.keys()]:
-            reverse_direction = {"N": "S", "S": "N", "E": "W", "W": "E"}
-            direction = reverse_direction[self.solution[-1]]
-            self.move_bot(direction)  # move_bot pops solution
+            d = self.solution[-1]
+            direction = [(k) for k, v in DIRECTIONS.items() if v == d]
+            x, y = direction[0]
+            self.move_bot((x*-1, y*-1))  # move_bot pops solution
 
     def check_end(self):
         """Self check of self.pos == self.end_pos"""
@@ -130,8 +120,6 @@ class AutomatedMazeBot:
 
             self.completion = True
             self.send_challenge_solution()
-
-
 
     def get_json(self, path):
         print("*** GET {}".format(path))
