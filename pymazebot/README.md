@@ -1,5 +1,5 @@
 # Introducing: (a)MazeBot!
-##Davvott's little Noop that likes mazes.
+## Davvott's little Noop that likes mazes.
 Of course, you need:
 
 * <code>Python 3.6
