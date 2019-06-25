@@ -2,8 +2,9 @@
 ## Davvott's little Noop that likes mazes.
 Of course, you need:
 
-* <code>Python 3.6
-* pip install requests</code>
+* <code>Python 3.6</code>
+* <code>pip install requests</code>
+
 ## Console Version:
 Run pymazebot in your favourite console.
 * WASD Controls
