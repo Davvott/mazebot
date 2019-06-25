@@ -4,7 +4,7 @@ Of course, you need:
 
 * <code>Python 3.6
 * pip install requests</code>
-##Console Version:
+## Console Version:
 Run pymazebot in your favourite console.
 * WASD Controls
 * Automated request to Noops HQ
