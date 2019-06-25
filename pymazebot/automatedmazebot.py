@@ -42,10 +42,8 @@ class AutomatedMazeBot:
             if 0 <= next_y < self.rows and 0 <= next_x < self.cols:
                 # Special Case
                 if self.map[next_y][next_x] == "B":
-                    # NOT SRP but...
-                    self.move_bot((delta_x, delta_y))
-                    self.check_end()
-                    return []  # To break while loop in find path
+                    # Return the one and only choice
+                    return [(delta_x, delta_y)]
 
                 elif self.map[next_y][next_x] == " ":
                     nei.append((delta_x, delta_y))
@@ -72,7 +70,7 @@ class AutomatedMazeBot:
             self.solution.append(DIRECTIONS[direction])
 
     def find_path(self):
-        """ Logic for path finding. Rudimentary, inefficient"""
+        """ Logic for path finding. Rudimentary, inefficient """
         nei = self.check_neighbor_options()
 
         self.check_end()  # At the finish line, no more work to be done
