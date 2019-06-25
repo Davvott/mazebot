@@ -11,4 +11,9 @@ Run pymazebot in your favourite console.
 * Automated request to Noops HQ
 * Backtracking for when you make a mistake!
 
+## Automated MazeBot:
+* Tested on small 10x10's, ironed out the kinks
+* MazeBot is not efficient, but is reasonably fast!
+* Need to streamline path finding logic for better decision making.
+* Need to update Cardinal directions to basic offsets
 

@@ -30,7 +30,7 @@ class AutomatedMazeBot:
         return "Name: {}, Pos: {}, End: {}, Map:\n{}".format(
             self.name, (self.x, self.y), self.end_pos, maze_map)
 
-    def check_neighbors(self):
+    def check_neighbor_options(self):
         """Checks map for neighbors, returns cardinal directions list"""
         nei = []
         d = ["E", "W", "S", "N"]
@@ -51,11 +51,11 @@ class AutomatedMazeBot:
                     if self.map[next_y][next_x] == "B":
                         # NOT SRP but...
                         self.move_bot(d[count])
-                        return nei
+                        self.check_end()
+                        return []  # To break while loop in find path
                     elif self.map[next_y][next_x] == " ":
                         nei.append(d[count])
                 count += 1
-        print(nei)
         return nei
 
     def move_bot(self, direction):
@@ -80,31 +80,41 @@ class AutomatedMazeBot:
             self.solution.append(direction)
 
     def find_path(self):
-        # check neighbours
-        # neighbors return ["E","W","S"]
-        nei = self.check_neighbors()
+        """ Logic for path finding. Rudimentary, inefficient"""
+        nei = self.check_neighbor_options()
 
-        if self.check_end():
-            # At the finish line, no more work to be done
-            self.completion = True
-            self.send_challenge_solution()
-            return True
+        self.check_end()  # At the finish line, no more work to be done
 
-        if len(nei) == 0:  # Dead End
+        # Dead End
+        if len(nei) == 0:
+            self.crossroads(nei)
+
+        # Crossroad
+        elif len(nei) > 1:
+            self.crossroads(nei)
+
+        else:
+            while len(nei) == 1:
+                # If only one direction to move, move it!
+                self.move_bot(nei[0])
+                nei = self.check_neighbor_options()
+
+
+    def crossroads(self, nei):
+        """ Handle junction call """
+        # Dead junction
+        if len(nei) == 0 and (self.x, self.y) in self.junction:
+            del self.junction[self.x, self.y]
             self.backtrack()
-
-        while len(nei) == 1:
-            # If only one direction to move, move it!
-            self.move_bot(nei[0])
-            nei = self.check_neighbors()
-
-        if len(nei) > 1:
-            # Crossroads
-            # Set junction / override
+        # Dead end
+        elif len(nei) == 0:
+            self.backtrack()
+        # Active Junction
+        else:
             self.junction[self.x, self.y] = nei
             print("junction", self.junction)
             direction = nei.pop()
-            # Move bot
+            print("Moving ", direction)
             self.move_bot(direction)
 
     def backtrack(self):
@@ -113,11 +123,15 @@ class AutomatedMazeBot:
             reverse_direction = {"N": "S", "S": "N", "E": "W", "W": "E"}
             direction = reverse_direction[self.solution[-1]]
             self.move_bot(direction)  # move_bot pops solution
-        # Back at junction
 
     def check_end(self):
         """Self check of self.pos == self.end_pos"""
-        return [self.x, self.y] == self.end_pos
+        if [self.x, self.y] == self.end_pos:
+
+            self.completion = True
+            self.send_challenge_solution()
+
+
 
     def get_json(self, path):
         print("*** GET {}".format(path))
