@@ -4,7 +4,6 @@ import requests
 DOMAIN = "https://api.noopschallenge.com"
 RANDOM = "/mazebot/random"
 RACE = "/mazebot/race/start"
-AUTH = "Davvott"
 PARAMS = {"maxSize": 10}
 
 DIRECTIONS = {(1, 0): "E", (-1, 0): "W", (0, 1): "S", (0, -1): "N"}
